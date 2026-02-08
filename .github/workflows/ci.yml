@@ -22,10 +22,22 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Install dependencies
-        run: pip install -r requirements-dev.txt
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+          pip install -r requirements-dev.txt
 
-      - name: Lint
-        run: ruff check . && ruff format --check .
+      - name: Lint with ruff
+        run: |
+          python -m ruff check .
+          python -m ruff format --check .
 
-      - name: Test
-        run: python -m pytest tests/ -v --tb=short
+      - name: Test with pytest
+        run: |
+          python -m pytest tests/ -v --cov=llm_integration_starter --cov-report=term-missing --cov-report=xml
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          file: ./coverage.xml
+          fail_ci_if_error: false

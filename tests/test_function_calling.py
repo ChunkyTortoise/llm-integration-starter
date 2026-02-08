@@ -1,90 +1,187 @@
-"""Tests for FunctionCallingClient and demo tools."""
+"""Tests for function calling abstraction."""
 
 from __future__ import annotations
 
-from llm_starter.function_calling import (
-    FunctionCallingClient,
-    ToolCallResult,
-    ToolDefinition,
-)
-from llm_starter.mock_llm import MockLLM
+import pytest
+
+from llm_integration_starter.function_calling import FunctionCallingFormatter, ToolCall, ToolDefinition
 
 
-class TestFunctionCallingClient:
-    """Tests for FunctionCallingClient."""
+class TestToolDefinition:
+    """Tests for ToolDefinition."""
 
-    def test_demo_tools_registered(self) -> None:
-        client = FunctionCallingClient()
-        tools = client.get_tools()
-        names = [t.name for t in tools]
-        assert "calculate" in names
-        assert "lookup" in names
-        assert "format_data" in names
-
-    def test_get_tool_schemas(self) -> None:
-        client = FunctionCallingClient()
-        schemas = client.get_tool_schemas()
-        assert len(schemas) >= 3
-        assert all("name" in s for s in schemas)
-        assert all("description" in s for s in schemas)
-
-    def test_register_custom_tool(self) -> None:
-        client = FunctionCallingClient()
-        custom = ToolDefinition(
-            name="custom",
-            description="Custom tool",
-            parameters={"type": "object"},
-            handler=lambda: "custom result",
+    def test_tool_definition_creation(self):
+        """Test creating a tool definition."""
+        tool = ToolDefinition(
+            name="test_func",
+            description="Test function",
+            parameters={"type": "object", "properties": {}},
         )
-        client.register_tool(custom)
-        names = [t.name for t in client.get_tools()]
-        assert "custom" in names
+        assert tool.name == "test_func"
+        assert tool.description == "Test function"
 
-    def test_execute_calculate(self) -> None:
-        client = FunctionCallingClient()
-        result = client.execute_tool("calculate", {"expression": "2 + 3"})
-        assert result.result == "5"
-        assert result.error is None
+    def test_tool_definition_create_helper(self):
+        """Test create() helper method."""
+        tool = ToolDefinition.create(
+            name="get_weather",
+            description="Get weather",
+            properties={"location": {"type": "string"}},
+            required=["location"],
+        )
+        assert tool.name == "get_weather"
+        assert tool.parameters["type"] == "object"
+        assert "location" in tool.parameters["properties"]
+        assert "location" in tool.parameters["required"]
 
-    def test_execute_lookup(self) -> None:
-        client = FunctionCallingClient()
-        result = client.execute_tool("lookup", {"query": "python"})
-        assert "Python" in result.result
-
-    def test_execute_format(self) -> None:
-        client = FunctionCallingClient()
-        result = client.execute_tool("format_data", {"data": "hello", "format": "json"})
-        assert "hello" in result.result
-
-    def test_execute_unknown_tool(self) -> None:
-        client = FunctionCallingClient()
-        result = client.execute_tool("nonexistent", {"arg": "val"})
-        assert result.error is not None
-        assert "not found" in result.error.lower()
-
-    def test_process_pipeline(self) -> None:
-        llm = MockLLM()
-        client = FunctionCallingClient(llm)
-        results = client.process("calculate something")
-        assert len(results) >= 1
-        assert isinstance(results[0], ToolCallResult)
+    def test_tool_definition_without_required(self):
+        """Test creating tool without required parameters."""
+        tool = ToolDefinition.create(
+            name="test",
+            description="Test",
+            properties={"param": {"type": "string"}},
+        )
+        assert tool.parameters["required"] == []
 
 
-class TestDemoFunctions:
-    """Tests for demo function implementations."""
+class TestToolCall:
+    """Tests for ToolCall."""
 
-    def test_calculate_basic(self) -> None:
-        result = FunctionCallingClient._demo_calculate(expression="10 * 5")
-        assert result == "50"
+    def test_tool_call_creation(self):
+        """Test creating a tool call."""
+        call = ToolCall(
+            id="call_123",
+            name="get_weather",
+            arguments={"location": "NYC"},
+        )
+        assert call.id == "call_123"
+        assert call.name == "get_weather"
+        assert call.arguments == {"location": "NYC"}
 
-    def test_calculate_invalid(self) -> None:
-        result = FunctionCallingClient._demo_calculate(expression="import os")
-        assert result == "Invalid expression"
 
-    def test_lookup_known(self) -> None:
-        result = FunctionCallingClient._demo_lookup(query="What is AI?")
-        assert "Artificial Intelligence" in result
+class TestFunctionCallingFormatter:
+    """Tests for FunctionCallingFormatter."""
 
-    def test_lookup_unknown(self) -> None:
-        result = FunctionCallingClient._demo_lookup(query="quantum computing")
-        assert "No fact found" in result
+    def test_formatter_initialization(self):
+        """Test creating a formatter."""
+        formatter = FunctionCallingFormatter()
+        assert formatter is not None
+
+    def test_format_tools_for_claude(self):
+        """Test formatting tools for Claude."""
+        formatter = FunctionCallingFormatter()
+        tool = ToolDefinition.create(
+            name="search",
+            description="Search function",
+            properties={"query": {"type": "string"}},
+        )
+
+        formatted = formatter.format_tools([tool], "claude")
+        assert len(formatted) == 1
+        assert formatted[0]["name"] == "search"
+        assert "input_schema" in formatted[0]
+
+    def test_format_tools_for_openai(self):
+        """Test formatting tools for OpenAI."""
+        formatter = FunctionCallingFormatter()
+        tool = ToolDefinition.create(
+            name="search",
+            description="Search function",
+            properties={"query": {"type": "string"}},
+        )
+
+        formatted = formatter.format_tools([tool], "openai")
+        assert len(formatted) == 1
+        assert formatted[0]["type"] == "function"
+        assert "function" in formatted[0]
+        assert formatted[0]["function"]["name"] == "search"
+
+    def test_format_tools_for_gemini(self):
+        """Test formatting tools for Gemini."""
+        formatter = FunctionCallingFormatter()
+        tool = ToolDefinition.create(
+            name="search",
+            description="Search function",
+            properties={"query": {"type": "string"}},
+        )
+
+        formatted = formatter.format_tools([tool], "gemini")
+        assert len(formatted) == 1
+        assert "function_declarations" in formatted[0]
+
+    def test_format_tools_unknown_provider(self):
+        """Test formatting tools for unknown provider raises error."""
+        formatter = FunctionCallingFormatter()
+        tool = ToolDefinition.create(name="test", description="Test", properties={})
+
+        with pytest.raises(ValueError, match="Unknown provider"):
+            formatter.format_tools([tool], "unknown")
+
+    def test_parse_claude_tool_calls(self):
+        """Test parsing Claude tool calls."""
+        formatter = FunctionCallingFormatter()
+        response = {
+            "content": [
+                {"type": "tool_use", "id": "call_1", "name": "search", "input": {"query": "test"}},
+            ]
+        }
+
+        calls = formatter.parse_tool_calls(response, "claude")
+        assert len(calls) == 1
+        assert calls[0].name == "search"
+        assert calls[0].arguments == {"query": "test"}
+
+    def test_parse_openai_tool_calls(self):
+        """Test parsing OpenAI tool calls."""
+        formatter = FunctionCallingFormatter()
+        response = {
+            "choices": [
+                {
+                    "message": {
+                        "tool_calls": [
+                            {
+                                "id": "call_1",
+                                "function": {"name": "search", "arguments": '{"query": "test"}'},
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+
+        calls = formatter.parse_tool_calls(response, "openai")
+        assert len(calls) == 1
+        assert calls[0].name == "search"
+
+    def test_parse_gemini_tool_calls(self):
+        """Test parsing Gemini tool calls."""
+        formatter = FunctionCallingFormatter()
+        response = {
+            "candidates": [
+                {
+                    "content": {
+                        "parts": [{"functionCall": {"name": "search", "args": {"query": "test"}}}]
+                    }
+                }
+            ]
+        }
+
+        calls = formatter.parse_tool_calls(response, "gemini")
+        assert len(calls) == 1
+        assert calls[0].name == "search"
+
+    def test_parse_tool_calls_unknown_provider(self):
+        """Test parsing tool calls for unknown provider raises error."""
+        formatter = FunctionCallingFormatter()
+        with pytest.raises(ValueError, match="Unknown provider"):
+            formatter.parse_tool_calls({}, "unknown")
+
+    def test_format_multiple_tools(self):
+        """Test formatting multiple tools."""
+        formatter = FunctionCallingFormatter()
+        tools = [
+            ToolDefinition.create("tool1", "First tool", {"p1": {"type": "string"}}),
+            ToolDefinition.create("tool2", "Second tool", {"p2": {"type": "number"}}),
+        ]
+
+        formatted = formatter.format_tools(tools, "claude")
+        assert len(formatted) == 2

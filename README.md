@@ -1,147 +1,366 @@
-# LLM Integration Starter
+# LLM Integration Starter Kit
 
-**Production-ready LLM integration patterns: completion, streaming, function calling, RAG, and hardening.** Each module is a self-contained recipe for adding AI capabilities to any application -- no API keys required for development and testing.
+[![CI](https://github.com/ChunkyTortoise/llm-integration-starter/workflows/CI/badge.svg)](https://github.com/ChunkyTortoise/llm-integration-starter/actions)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Tests](https://img.shields.io/badge/tests-76%20passing-brightgreen.svg)]()
 
-![CI](https://github.com/ChunkyTortoise/llm-integration-starter/actions/workflows/ci.yml/badge.svg)
-![Python](https://img.shields.io/badge/python-3.11%20%7C%203.12-blue)
-![Tests](https://img.shields.io/badge/tests-88%20passing-brightgreen)
-![License](https://img.shields.io/badge/license-MIT-green)
+**A beginner-friendly learning kit for integrating multiple LLM providers with a unified interface.**
 
-## What This Solves
+This is a **code-as-documentation** project designed to teach LLM integration patterns through heavily commented, production-quality code. Perfect for developers learning to work with Claude, OpenAI, Gemini, and other LLM APIs.
 
-- **No starting point for LLM integration** -- 8 self-contained modules covering every common pattern from basic completion to production hardening
-- **API keys block local development** -- MockLLM provides deterministic responses with simulated latency and token counting
-- **Production reliability is an afterthought** -- Circuit breaker, retry with backoff, and rate limiting built in from day one
-- **Cost visibility comes too late** -- Per-request cost tracking with daily/monthly projections and model-level breakdown
+## Why This Project?
 
-## Architecture
+While production orchestrators like [LangChain](https://github.com/langchain-ai/langchain) and [ai-orchestrator](https://github.com/ChunkyTortoise/ai-orchestrator) are powerful, they can be overwhelming for beginners. This starter kit focuses on:
+
+- **Educational clarity**: Every module is heavily commented to explain *why*, not just *what*
+- **Core patterns only**: No framework bloat—just the essential patterns you need
+- **Cross-provider abstraction**: Learn to build provider-agnostic interfaces
+- **Real-world concerns**: Caching, retries, circuit breakers, cost tracking
+
+## Features
 
 ```
-+-------------------------------------------------------------+
-|                    Streamlit Demo (app.py)                    |
-|   +----------+----------+----------+------+--------------+   |
-|   |Completion|Streaming |Func Call | RAG  |  Dashboard   |   |
-|   +----+-----+----+-----+----+-----+--+---+------+-------+   |
-+--------+----------+----------+--------+----------+-----------+
-         |          |          |        |          |
-   +-----v---+ +---v----+ +--v--+ +--v--+ +-----v------+
-   |Complete | |Stream  | |Func | | RAG | | Cost +     |
-   | Client  | | Client | |Call | |Pipe | | Latency    |
-   +-----+---+ +---+----+ +--+--+ +--+--+ | Trackers   |
-         |         |          |       |    +------------+
-   +-----v---------v----------v-------v----------------+
-   |              MockLLM (mock_llm.py)                 |
-   |   Deterministic responses, no API keys needed      |
-   +----------------------------------------------------+
-   |            Hardening (hardening.py)                 |
-   |   Circuit Breaker + Retry + Rate Limiting           |
-   +----------------------------------------------------+
+┌─────────────────────────────────────────────────────────┐
+│                   UnifiedLLMClient                      │
+│  Single interface for multiple LLM providers            │
+└────────────┬────────────────────────────────────────────┘
+             │
+      ┌──────┴──────┐
+      │   Providers  │
+      │  - Claude    │
+      │  - OpenAI    │
+      │  - Gemini    │
+      │  - Mock      │
+      └──────┬──────┘
+             │
+   ┌─────────┼─────────┐
+   │         │         │
+┌──▼──┐  ┌──▼──┐  ┌──▼──┐
+│Cache│  │Retry│  │Cost │
+│ LRU │  │ +CB │  │Track│
+└─────┘  └─────┘  └─────┘
+
+Legend: CB = Circuit Breaker
 ```
 
-## Modules
+### Core Capabilities
 
-| Module | File | Description |
-|--------|------|-------------|
-| **Mock LLM** | `mock_llm.py` | Deterministic LLM mock with canned responses, streaming, and function calling |
-| **Completion** | `completion.py` | Basic completion client with system prompts and FastAPI endpoint factory |
-| **Streaming** | `streaming.py` | SSE streaming with chunk-by-chunk event generation |
-| **Function Calling** | `function_calling.py` | Tool registration, LLM-driven tool selection, and execution pipeline |
-| **RAG Pipeline** | `rag_pipeline.py` | TF-IDF vectorization, cosine similarity retrieval, context-augmented generation |
-| **Hardening** | `hardening.py` | Circuit breaker (closed/open/half-open), retry with backoff, timeout |
-| **Cost Tracker** | `cost_tracker.py` | Per-request cost recording, daily/monthly projections, model-level breakdown |
-| **Latency Tracker** | `latency_tracker.py` | P50/P95/P99 percentiles with rolling window cleanup |
+- **Unified Client**: One interface for all providers
+- **Function Calling**: Cross-provider tool use abstraction
+- **Streaming**: SSE parser for real-time responses
+- **Retry Logic**: Exponential backoff with jitter
+- **Circuit Breaker**: Auto-recovery from cascading failures
+- **Fallback Chains**: Provider redundancy for high availability
+- **LRU Cache**: In-memory caching with TTL
+- **Cost Tracking**: Per-provider cost monitoring
+- **CLI**: Command-line tool for testing and benchmarking
 
 ## Quick Start
 
+### Installation
+
 ```bash
+# Clone the repository
 git clone https://github.com/ChunkyTortoise/llm-integration-starter.git
 cd llm-integration-starter
+
+# Install dependencies
+pip install -e .
 pip install -r requirements-dev.txt
-make test
-make demo
+
+# Copy environment template
+cp .env.example .env
+# Edit .env with your API keys
 ```
 
-## Key Features
+### Basic Usage
 
-### Mock LLM (Zero-Config Development)
-- Deterministic responses for reproducible testing
-- Canned response matching by keyword
-- Simulated latency, token counting, and call logging
+```python
+from llm_integration_starter import UnifiedLLMClient
 
-### Completion Client
-- System prompt support and context augmentation
-- FastAPI endpoint factory for instant API creation
+# Create a client (defaults to mock provider for testing)
+client = UnifiedLLMClient(provider="mock")
 
-### SSE Streaming
-- Server-Sent Events format for real-time UI updates
-- Chunk-by-chunk delivery with event IDs
+# Send a message
+messages = [{"role": "user", "content": "What is 2+2?"}]
+response = client.complete(messages)
 
-### Function Calling
-- Tool definition with JSON Schema parameters
-- 3 built-in demo tools: calculate, lookup, format_data
-
-### RAG Pipeline
-- TF-IDF vectorization with cosine similarity retrieval
-- Configurable top-K with source attribution
-
-### Production Hardening
-- Circuit breaker: closed -> open -> half-open state machine
-- Automatic retry with configurable backoff
-
-### Observability
-- **Cost tracking**: Per-request pricing, model-level breakdown, daily/monthly projections
-- **Latency tracking**: P50/P95/P99 percentiles with configurable rolling window
-
-## Tech Stack
-
-| Layer | Technology |
-|-------|-----------|
-| UI | Streamlit (5 tabs) |
-| ML | scikit-learn (TF-IDF) |
-| API | FastAPI (endpoint factories) |
-| Testing | pytest (88 tests) |
-| CI | GitHub Actions (Python 3.11, 3.12) |
-| Linting | Ruff |
-
-## Project Structure
-
-```
-llm-integration-starter/
-├── app.py                          # Streamlit demo (5 tabs)
-├── llm_starter/
-│   ├── mock_llm.py                 # Mock LLM foundation
-│   ├── completion.py               # Basic completion pattern
-│   ├── streaming.py                # SSE streaming
-│   ├── function_calling.py         # Tool definitions + execution
-│   ├── rag_pipeline.py             # TF-IDF RAG pipeline
-│   ├── hardening.py                # Circuit breaker + retry
-│   ├── cost_tracker.py             # Cost tracking + projections
-│   └── latency_tracker.py          # P50/P95/P99 latency
-├── demo_data/                      # Sample documents for RAG
-├── tests/                          # 8 test files, one per module
-├── .github/workflows/ci.yml        # CI pipeline
-├── Makefile                        # demo, test, lint, setup
-└── requirements-dev.txt
+print(f"Response: {response.text}")
+print(f"Cost: ${response.cost:.4f}")
+print(f"Latency: {response.latency_ms:.0f}ms")
 ```
 
-## Testing
+### CLI Examples
 
 ```bash
-make test                           # Full suite (88 tests)
-python -m pytest tests/ -v          # Verbose output
-python -m pytest tests/test_hardening.py  # Single module
+# Chat with a provider
+llm-starter chat "Hello, world!"
+
+# Compare providers
+llm-starter compare --providers claude,openai "Explain AI"
+
+# Benchmark performance
+llm-starter benchmark --provider mock --n-requests 100
+
+# Test fallback chain
+llm-starter fallback --providers claude,openai,gemini "Hello"
 ```
 
-## Related Projects
+## Module Guide
 
-- [EnterpriseHub](https://github.com/ChunkyTortoise/EnterpriseHub) -- Real estate AI platform with BI dashboards and CRM integration
-- [ai-orchestrator](https://github.com/ChunkyTortoise/ai-orchestrator) -- AgentForge: unified async LLM interface (Claude, Gemini, OpenAI, Perplexity)
-- [docqa-engine](https://github.com/ChunkyTortoise/docqa-engine) -- RAG document Q&A with hybrid retrieval and prompt engineering lab
-- [insight-engine](https://github.com/ChunkyTortoise/insight-engine) -- Upload CSV/Excel, get instant dashboards, predictive models, and reports
-- [scrape-and-serve](https://github.com/ChunkyTortoise/scrape-and-serve) -- Web scraping, price monitoring, Excel-to-web apps, and SEO tools
-- [prompt-engineering-lab](https://github.com/ChunkyTortoise/prompt-engineering-lab) -- 8 prompt patterns, A/B testing, TF-IDF evaluation
-- [Portfolio](https://chunkytortoise.github.io) -- Project showcase and services
+### 📦 `client.py` - Unified Interface
+The heart of the starter kit. Provides a single API for all providers.
+
+**Key Classes:**
+- `UnifiedLLMClient`: Main client class
+- `LLMResponse`: Standardized response format
+
+**Learning Points:**
+- Provider registry pattern
+- Response normalization
+- Dependency injection
+
+### 🎭 `providers/` - Provider Implementations
+Each provider implements the `BaseProvider` interface.
+
+**Providers:**
+- `mock.py`: Deterministic testing provider (no API needed)
+- `claude.py`: Anthropic Claude integration
+- `openai_provider.py`: OpenAI GPT integration
+- `gemini.py`: Google Gemini integration
+
+**Learning Points:**
+- Abstract base classes
+- Interface segregation
+- Provider-specific handling
+
+### 🌊 `streaming.py` - Server-Sent Events
+Parse SSE streams from different providers into a common format.
+
+**Key Classes:**
+- `StreamingParser`: Provider-agnostic SSE parser
+- `StreamDelta`: Single token/chunk from stream
+
+**Learning Points:**
+- SSE protocol basics
+- Event stream processing
+- Provider format differences
+
+### 🛠️ `function_calling.py` - Tool Use Abstraction
+Normalize function calling across providers.
+
+**Key Classes:**
+- `ToolDefinition`: Provider-agnostic tool schema
+- `ToolCall`: Parsed tool call from LLM
+- `FunctionCallingFormatter`: Format converter
+
+**Learning Points:**
+- JSON Schema for parameters
+- Provider format translation
+- Function call lifecycle
+
+### 🔄 `retry.py` - Resilience Patterns
+Exponential backoff and circuit breaker for fault tolerance.
+
+**Key Classes:**
+- `RetryPolicy`: Configurable retry behavior
+- `CircuitBreaker`: Failure tracking with auto-recovery
+
+**Learning Points:**
+- Exponential backoff algorithm
+- Jitter for load distribution
+- Circuit breaker state machine
+- Graceful degradation
+
+### 🔗 `fallback.py` - Provider Redundancy
+Try providers in sequence for high availability.
+
+**Key Classes:**
+- `FallbackChain`: Sequential provider failover
+- `FallbackResult`: Success tracking with errors
+
+**Learning Points:**
+- Failover strategies
+- Error accumulation
+- Provider ordering
+
+### 💾 `cache.py` - Response Caching
+LRU cache with TTL to reduce costs and latency.
+
+**Key Classes:**
+- `LRUCache`: Least-recently-used cache
+
+**Learning Points:**
+- LRU eviction policy
+- TTL expiration
+- Cache key generation
+- Hit rate tracking
+
+### 💰 `cost_tracker.py` - Usage Monitoring
+Track and analyze LLM usage costs over time.
+
+**Key Classes:**
+- `CostTracker`: Cost aggregation and analysis
+- `CostEntry`: Single usage record
+
+**Learning Points:**
+- Cost estimation
+- Usage analytics
+- Time-based queries
+
+### 🖥️ `cli.py` - Command-Line Interface
+Interactive CLI built with Click.
+
+**Commands:**
+- `chat`: Single message to provider
+- `compare`: Side-by-side comparison
+- `benchmark`: Performance testing
+- `fallback`: Test fallback chains
+
+**Learning Points:**
+- CLI design patterns
+- Progress bars
+- Result formatting
+
+## Architecture Diagram
+
+```
+┌───────────────────────────────────────────────────────────┐
+│                      Application Layer                     │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐    │
+│  │     CLI      │  │  Web App     │  │   Scripts    │    │
+│  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘    │
+└─────────┼──────────────────┼──────────────────┼───────────┘
+          │                  │                  │
+          └──────────────────┼──────────────────┘
+                             │
+┌────────────────────────────▼──────────────────────────────┐
+│                   UnifiedLLMClient                         │
+│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌──────────┐ │
+│  │  Cache   │  │  Retry   │  │Fallback  │  │   Cost   │ │
+│  │  Layer   │  │  Logic   │  │  Chain   │  │ Tracker  │ │
+│  └──────────┘  └──────────┘  └──────────┘  └──────────┘ │
+└────────────────────────────┬──────────────────────────────┘
+                             │
+          ┌──────────────────┼──────────────────┐
+          │                  │                  │
+┌─────────▼─────────┐ ┌──────▼──────┐ ┌────────▼────────┐
+│ ClaudeProvider    │ │OpenAIProvider│ │ GeminiProvider  │
+│                   │ │              │ │                 │
+│ • Messages API    │ │ • Chat API   │ │ • Generate API  │
+│ • Streaming       │ │ • Functions  │ │ • Tools         │
+│ • Tools           │ │ • Streaming  │ │ • Streaming     │
+└───────────────────┘ └──────────────┘ └─────────────────┘
+```
+
+## Test Coverage
+
+**76 tests across 9 test files:**
+
+| Module | Tests | Coverage |
+|--------|-------|----------|
+| `client.py` | 12 | Core functionality |
+| `providers/` | 12 | Mock provider + base class |
+| `streaming.py` | 12 | SSE parsing |
+| `function_calling.py` | 12 | Tool formatting & parsing |
+| `retry.py` | 10 | Retry logic + circuit breaker |
+| `fallback.py` | 8 | Fallback chain logic |
+| `cache.py` | 12 | LRU cache + TTL |
+| `cost_tracker.py` | 11 | Cost tracking & analytics |
+| `cli.py` | 7 | CLI commands |
+
+```bash
+# Run tests
+make test
+
+# Run tests with coverage report
+python -m pytest tests/ -v --cov=llm_integration_starter --cov-report=html
+open htmlcov/index.html
+```
+
+## Development
+
+```bash
+# Install in development mode
+make install
+
+# Format code
+make format
+
+# Lint code
+make lint
+
+# Run tests
+make test
+
+# Clean build artifacts
+make clean
+```
+
+## Comparison: Starter Kit vs Production Tools
+
+| Feature | This Starter Kit | ai-orchestrator | LangChain |
+|---------|------------------|-----------------|-----------|
+| **Purpose** | Learning & education | Production orchestration | Production framework |
+| **Code Style** | Heavily commented | Production-ready | Framework architecture |
+| **Complexity** | Low (11 modules) | Medium (async, multi-agent) | High (100+ modules) |
+| **Dependencies** | 3 (httpx, click, pydantic) | ~8 | 20+ |
+| **Best For** | Understanding patterns | Building orchestrators | Full-featured apps |
+
+## When to Use This vs ai-orchestrator
+
+**Use this starter kit when:**
+- You're learning LLM integration patterns
+- You want to understand how things work under the hood
+- You're building a simple integration from scratch
+- You need educational reference code
+
+**Use ai-orchestrator when:**
+- You need production-ready multi-agent orchestration
+- You require async/await for concurrency
+- You're building complex agentic workflows
+- You need battle-tested reliability patterns
+
+**Use LangChain when:**
+- You need a full-featured framework
+- You're building a complex RAG system
+- You want pre-built chains and agents
+- You need extensive provider integrations
+
+## Learning Path
+
+1. **Start with `providers/mock.py`**: Understand the provider interface without API calls
+2. **Read `client.py`**: Learn the unified client pattern
+3. **Study `streaming.py`**: Understand SSE parsing
+4. **Explore `function_calling.py`**: Learn tool use abstraction
+5. **Review `retry.py` & `fallback.py`**: Learn resilience patterns
+6. **Implement `cache.py`**: Understand caching strategies
+7. **Track with `cost_tracker.py`**: Learn usage monitoring
+8. **Try the `cli.py`**: Interactive experimentation
+
+## Contributing
+
+Contributions welcome! This is a learning project, so:
+- Prioritize clarity over cleverness
+- Add detailed comments explaining *why*
+- Include examples in docstrings
+- Write comprehensive tests
 
 ## License
 
-MIT License. See [LICENSE](LICENSE) for details.
+MIT License - see [LICENSE](LICENSE) for details.
+
+## Author
+
+**ChunkyTortoise**
+- GitHub: [@ChunkyTortoise](https://github.com/ChunkyTortoise)
+- Portfolio: [chunkytortoise.github.io](https://chunkytortoise.github.io)
+
+## Acknowledgments
+
+Built as a companion to my production LLM orchestration work. Inspired by the need for beginner-friendly, well-documented LLM integration examples.
+
+---
+
+**⭐ Star this repo** if you find it helpful for learning LLM integration!
