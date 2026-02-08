@@ -1,0 +1,36 @@
+CloudSync Pro Company Policies
+
+RETURN AND REFUND POLICY
+- All subscription plans include a 14-day free trial with full feature access.
+- Monthly subscriptions can be cancelled at any time; service continues until the end of the billing period.
+- Annual subscriptions are eligible for a full refund within 30 days of purchase.
+- After 30 days, annual subscription refunds are prorated based on remaining months.
+- Enterprise custom contracts follow terms specified in the signed agreement.
+
+PRIVACY POLICY
+- We collect only the data necessary to provide our synchronization services.
+- Customer data in transit is never stored on our servers beyond the sync operation.
+- Account information (email, company name, billing) is stored securely with AES-256 encryption.
+- We never sell or share customer data with third parties for marketing purposes.
+- Customers can request full data export or deletion at any time via support@cloudsync.io.
+- We comply with GDPR, CCPA, and SOC 2 Type II requirements.
+
+ACCEPTABLE USE POLICY
+- CloudSync Pro must not be used to synchronize illegal or prohibited content.
+- Customers must not attempt to bypass rate limits or abuse API endpoints.
+- Automated scripts must include proper error handling and respect rate limit headers.
+- Sharing API credentials or access tokens with unauthorized parties is prohibited.
+- Violation of these policies may result in account suspension or termination.
+
+SERVICE LEVEL AGREEMENT
+- CloudSync Pro guarantees 99.9% uptime for Professional and Enterprise plans.
+- Starter plans target 99.5% uptime but are not covered by SLA credits.
+- Scheduled maintenance windows are announced 72 hours in advance.
+- In the event of SLA breach, affected customers receive service credits.
+- Credit amounts: <99.9% = 10% credit, <99.5% = 25% credit, <99.0% = 50% credit.
+
+DATA RETENTION
+- Sync job execution logs are retained for 90 days on all plans.
+- Enterprise customers can configure custom retention periods up to 7 years.
+- Deleted sync jobs and their history are permanently removed after 30 days.
+- Account data is retained for 60 days after account closure for recovery purposes.

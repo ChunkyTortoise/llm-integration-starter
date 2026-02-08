@@ -1,0 +1,55 @@
+CloudSync Pro API Reference v2
+
+Base URL: https://api.cloudsync.io/v2
+Authentication: Bearer token via Authorization header
+
+POST /auth/token
+  Description: Generate an API access token
+  Body: {"email": "string", "password": "string"}
+  Response: {"token": "string", "expires_in": 3600}
+  Rate limit: 5 requests per minute
+
+GET /sync/jobs
+  Description: List all sync jobs for the authenticated account
+  Query params: status (active|paused|failed), limit (default 20), offset
+  Response: {"jobs": [...], "total": 42, "page": 1}
+  Rate limit: 60 requests per minute
+
+POST /sync/jobs
+  Description: Create a new sync job
+  Body: {"name": "string", "source": {"provider": "aws", "config": {}}, "target": {"provider": "gcp", "config": {}}, "schedule": "*/5 * * * *"}
+  Response: {"job_id": "string", "status": "active", "created_at": "ISO8601"}
+  Rate limit: 10 requests per minute
+
+GET /sync/jobs/{job_id}
+  Description: Get details of a specific sync job
+  Response: {"job_id": "string", "name": "string", "status": "string", "last_run": "ISO8601", "metrics": {"bytes_transferred": 0, "records_synced": 0}}
+  Rate limit: 60 requests per minute
+
+DELETE /sync/jobs/{job_id}
+  Description: Delete a sync job permanently
+  Response: {"deleted": true}
+  Rate limit: 10 requests per minute
+
+POST /sync/jobs/{job_id}/run
+  Description: Manually trigger a sync job
+  Response: {"run_id": "string", "started_at": "ISO8601"}
+  Rate limit: 5 requests per minute
+
+GET /sync/jobs/{job_id}/history
+  Description: Get execution history for a sync job
+  Query params: limit (default 10), status (success|failed|running)
+  Response: {"runs": [...], "total": 100}
+  Rate limit: 30 requests per minute
+
+GET /metrics/usage
+  Description: Get account usage metrics
+  Query params: period (day|week|month)
+  Response: {"bytes_transferred": 0, "jobs_executed": 0, "api_calls": 0, "period": "day"}
+  Rate limit: 30 requests per minute
+
+POST /webhooks
+  Description: Register a webhook for job events
+  Body: {"url": "string", "events": ["job.completed", "job.failed"]}
+  Response: {"webhook_id": "string", "status": "active"}
+  Rate limit: 5 requests per minute

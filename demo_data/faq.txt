@@ -1,0 +1,35 @@
+Q: What is CloudSync Pro?
+A: CloudSync Pro is an enterprise SaaS platform for real-time data synchronization across cloud providers.
+
+Q: How do I create an account?
+A: Visit app.cloudsync.io/signup, enter your email and company name, then verify via the confirmation link.
+
+Q: What cloud providers are supported?
+A: We support AWS, Google Cloud, Azure, and DigitalOcean with automatic credential management.
+
+Q: How much does CloudSync Pro cost?
+A: Plans start at $49/month for Starter (5 sync jobs), $199/month for Professional (50 sync jobs), and $499/month for Enterprise (unlimited).
+
+Q: Can I sync databases across providers?
+A: Yes, CloudSync Pro supports PostgreSQL, MySQL, MongoDB, and Redis synchronization across any supported cloud provider.
+
+Q: What is the maximum data transfer rate?
+A: Starter plans support up to 10 GB/hour, Professional up to 100 GB/hour, and Enterprise has no transfer limits.
+
+Q: How do I monitor sync job status?
+A: The real-time dashboard at app.cloudsync.io/dashboard shows all active sync jobs, throughput, error rates, and latency metrics.
+
+Q: Is my data encrypted during transfer?
+A: Yes, all data is encrypted in transit using TLS 1.3 and at rest using AES-256 encryption.
+
+Q: How do I contact support?
+A: Email support@cloudsync.io, use the in-app chat widget, or call 1-800-SYNC-PRO for Enterprise customers.
+
+Q: What happens if a sync job fails?
+A: Failed jobs automatically retry 3 times with exponential backoff. You receive email and Slack alerts on failure.
+
+Q: Can I schedule sync jobs?
+A: Yes, sync jobs support cron-based scheduling, event triggers, and manual execution from the dashboard.
+
+Q: Do you offer an API?
+A: Yes, our REST API at api.cloudsync.io/v2 provides full programmatic access to all sync operations.
