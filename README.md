@@ -250,6 +250,40 @@ Interactive CLI built with Click.
 
 ## Architecture Diagram
 
+```mermaid
+graph TD
+    subgraph Application Layer
+        CLI[CLI]
+        WebApp[Web App]
+        Scripts[Scripts]
+    end
+
+    CLI --> Client
+    WebApp --> Client
+    Scripts --> Client
+
+    subgraph UnifiedLLMClient
+        Client[Unified Client]
+        Cache[LRU Cache]
+        Retry[Retry + Circuit Breaker]
+        Fallback[Fallback Chain]
+        Cost[Cost Tracker]
+    end
+
+    Client --> Cache
+    Client --> Retry
+    Client --> Fallback
+    Client --> Cost
+
+    Client --> Claude[Claude Provider]
+    Client --> OpenAI[OpenAI Provider]
+    Client --> Gemini[Gemini Provider]
+    Client --> Mock[Mock Provider]
+```
+
+<details>
+<summary>ASCII version</summary>
+
 ```
 ┌───────────────────────────────────────────────────────────┐
 │                      Application Layer                     │
@@ -278,6 +312,8 @@ Interactive CLI built with Click.
 │ • Tools           │ │ • Streaming  │ │ • Streaming     │
 └───────────────────┘ └──────────────┘ └─────────────────┘
 ```
+
+</details>
 
 ## Test Coverage
 
