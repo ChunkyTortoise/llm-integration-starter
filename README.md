@@ -428,6 +428,13 @@ See [BENCHMARKS.md](BENCHMARKS.md) for performance benchmarks across providers, 
 
 See [CHANGELOG.md](CHANGELOG.md) for release history.
 
+## Related Projects
+
+- [ai-orchestrator](https://github.com/ChunkyTortoise/ai-orchestrator) -- AgentForge: unified async LLM interface (Claude, Gemini, OpenAI, Perplexity)
+- [EnterpriseHub](https://github.com/ChunkyTortoise/EnterpriseHub) -- Real estate AI platform with BI dashboards and CRM integration
+- [prompt-engineering-lab](https://github.com/ChunkyTortoise/prompt-engineering-lab) -- 8 prompt patterns, A/B testing, TF-IDF evaluation
+- [Portfolio](https://chunkytortoise.github.io) -- Project showcase and services
+
 ## Contributing
 
 Contributions welcome! This is a learning project, so:
