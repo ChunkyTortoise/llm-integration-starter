@@ -1,3 +1,5 @@
+[![Sponsor](https://img.shields.io/badge/Sponsor-💖-pink.svg)](https://github.com/sponsors/ChunkyTortoise)
+
 # LLM Integration Starter Kit
 
 [![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://ct-llm-starter.streamlit.app)
