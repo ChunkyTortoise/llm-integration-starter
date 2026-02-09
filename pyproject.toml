@@ -38,3 +38,8 @@ python_functions = "test_*"
 [build-system]
 requires = ["setuptools>=45", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["llm_integration_starter*", "llm_starter*"]
+exclude = ["tests*", "demo_data*"]
