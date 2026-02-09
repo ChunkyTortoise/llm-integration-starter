@@ -7,3 +7,26 @@ dist/
 build/
 .env
 .venv/
+
+# Added by deep clean
+*.py[cod]
+*$py.class
+*.so
+*.egg
+venv/
+env/
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.hypothesis/
+.coverage
+htmlcov/
+coverage.xml
+.mypy_cache/
+.env.local
+.env.*.local
+.DS_Store
+Thumbs.db
+*.log

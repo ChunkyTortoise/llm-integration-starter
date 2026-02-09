@@ -9,17 +9,15 @@ for all provider/model combos, and mock provider precision.
 from __future__ import annotations
 
 import time
-from unittest.mock import patch
 
 import pytest
 
 from llm_integration_starter.cache import LRUCache
-from llm_integration_starter.client import LLMResponse, UnifiedLLMClient
-from llm_integration_starter.fallback import FallbackChain, FallbackResult
+from llm_integration_starter.client import LLMResponse
+from llm_integration_starter.fallback import FallbackChain
 from llm_integration_starter.providers.mock import MockProvider
 from llm_integration_starter.retry import CircuitBreaker, RetryPolicy
 from llm_integration_starter.token_counter import TokenCounter
-
 
 # ---------------------------------------------------------------------------
 # Cache edge cases
