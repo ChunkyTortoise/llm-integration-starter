@@ -1,4 +1,5 @@
 """In-memory LRU cache with TTL."""
+
 from __future__ import annotations
 
 import hashlib
@@ -9,6 +10,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     pass
+
 
 class LRUCache:
     def __init__(self, max_size: int = 100, ttl_seconds: float = 3600):

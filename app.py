@@ -21,8 +21,7 @@ from llm_starter.streaming import StreamingClient
 @st.cache_resource
 def get_llm() -> MockLLM:
     llm = MockLLM(
-        default_response="This is a demo response from MockLLM. "
-        "In production, this would be a real LLM API call.",
+        default_response="This is a demo response from MockLLM. In production, this would be a real LLM API call.",
         latency_ms=15.0,
     )
     llm.set_response("hello", "Hello! I'm your AI assistant. How can I help you today?")
@@ -32,8 +31,7 @@ def get_llm() -> MockLLM:
     )
     llm.set_response(
         "pricing",
-        "Our plans start at $49/month for Starter, $199/month for Professional, "
-        "and $499/month for Enterprise.",
+        "Our plans start at $49/month for Starter, $199/month for Professional, and $499/month for Enterprise.",
     )
     return llm
 
@@ -76,9 +74,7 @@ def main():
     st.caption("Production-ready LLM integration patterns — no API keys required")
 
     # ── Tabs ─────────────────────────────────────────────────────────────────
-    tab1, tab2, tab3, tab4, tab5 = st.tabs(
-        ["Completion", "Streaming", "Function Calling", "RAG", "Dashboard"]
-    )
+    tab1, tab2, tab3, tab4, tab5 = st.tabs(["Completion", "Streaming", "Function Calling", "RAG", "Dashboard"])
 
     llm = get_llm()
     cost_tracker = get_cost_tracker()
@@ -91,9 +87,7 @@ def main():
 
         col1, col2 = st.columns([2, 1])
         with col1:
-            prompt = st.text_area(
-                "Prompt", value="Tell me about Python", height=100, key="comp_prompt"
-            )
+            prompt = st.text_area("Prompt", value="Tell me about Python", height=100, key="comp_prompt")
         with col2:
             system = st.text_input("System prompt (optional)", value="You are a helpful assistant.")
 
@@ -121,9 +115,7 @@ def main():
         st.header("SSE Streaming")
         st.markdown("Watch the response arrive chunk by chunk as Server-Sent Events.")
 
-        stream_prompt = st.text_area(
-            "Prompt", value="Explain AI briefly", height=100, key="stream_prompt"
-        )
+        stream_prompt = st.text_area("Prompt", value="Explain AI briefly", height=100, key="stream_prompt")
 
         if st.button("Stream", key="stream_btn"):
             client = StreamingClient(llm)
@@ -186,10 +178,7 @@ def main():
     # ── Tab 4: RAG ──────────────────────────────────────────────────────────
     with tab4:
         st.header("RAG Pipeline")
-        st.markdown(
-            "Retrieval-Augmented Generation: ingest documents, "
-            "retrieve relevant context, generate answers."
-        )
+        st.markdown("Retrieval-Augmented Generation: ingest documents, retrieve relevant context, generate answers.")
 
         rag = SimpleRAG(llm, top_k=3)
         docs = load_demo_docs()
@@ -200,9 +189,7 @@ def main():
         else:
             st.warning("No demo documents found in demo_data/")
 
-        rag_query = st.text_input(
-            "Question", value="How much does CloudSync Pro cost?", key="rag_q"
-        )
+        rag_query = st.text_input("Question", value="How much does CloudSync Pro cost?", key="rag_q")
 
         if st.button("Ask", key="rag_btn") and docs:
             result = rag.query(rag_query)

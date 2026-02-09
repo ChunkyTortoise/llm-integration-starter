@@ -161,9 +161,7 @@ class FunctionCallingClient:
     def _demo_format(data: str = "", format: str = "json", **kwargs: Any) -> str:
         """Demo: format data."""
         try:
-            parsed = (
-                json.loads(data) if data.startswith("{") or data.startswith("[") else {"text": data}
-            )
+            parsed = json.loads(data) if data.startswith("{") or data.startswith("[") else {"text": data}
             if format == "json":
                 return json.dumps(parsed, indent=2)
             return str(parsed)

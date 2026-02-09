@@ -29,8 +29,13 @@ class TestCacheEdgeCases:
 
     def _make_response(self, text: str = "resp") -> LLMResponse:
         return LLMResponse(
-            text=text, input_tokens=1, output_tokens=1,
-            cost=0.0, latency_ms=1.0, provider="mock", model="m",
+            text=text,
+            input_tokens=1,
+            output_tokens=1,
+            cost=0.0,
+            latency_ms=1.0,
+            provider="mock",
+            model="m",
         )
 
     def test_lru_access_promotes_item_preventing_eviction(self):
@@ -378,7 +383,7 @@ class TestTokenCounterEdgeCases:
     def test_count_message_tokens_multiple_messages(self):
         """Multiple messages accumulate per-message overhead."""
         messages = [
-            {"role": "user", "content": "abcd"},      # 1 token (4/4)
+            {"role": "user", "content": "abcd"},  # 1 token (4/4)
             {"role": "assistant", "content": "efgh"},  # 1 token (4/4)
         ]
         total = TokenCounter.count_message_tokens(messages, "openai")

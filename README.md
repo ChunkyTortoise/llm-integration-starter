@@ -12,6 +12,16 @@
 
 This is a **code-as-documentation** project designed to teach LLM integration patterns through heavily commented, production-quality code. Perfect for developers learning to work with Claude, OpenAI, Gemini, and other LLM APIs.
 
+## What This Solves
+
+- **Provider sprawl** — One consistent client across Claude, OpenAI, and Gemini
+- **Missing production patterns** — Retries, circuit breakers, caching, and cost tracking included
+- **Learning curve** — Heavily commented modules that explain the why, not just the what
+
+## Demo
+
+Live demo: https://ct-llm-starter.streamlit.app
+
 ## Why This Project?
 
 While production orchestrators like [LangChain](https://github.com/langchain-ai/langchain) and [ai-orchestrator](https://github.com/ChunkyTortoise/ai-orchestrator) are powerful, they can be overwhelming for beginners. This starter kit focuses on:
@@ -198,6 +208,18 @@ LRU cache with TTL to reduce costs and latency.
 - LRU eviction policy
 - TTL expiration
 - Cache key generation
+
+## Service Mapping
+
+- Service 6: AI-Powered Personal and Business Automation
+- Service 5: Prompt Engineering and System Optimization
+
+## Certification Mapping
+
+- IBM Generative AI Engineering with PyTorch, LangChain & Hugging Face
+- Duke University LLMOps Specialization
+- Vanderbilt Generative AI Strategic Leader Specialization
+- Google Cloud Generative AI Leader Certificate
 - Hit rate tracking
 
 ### 💰 `cost_tracker.py` - Usage Monitoring

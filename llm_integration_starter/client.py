@@ -1,4 +1,5 @@
 """Unified LLM client."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -20,6 +21,7 @@ class LLMResponse:
     latency_ms: float
     provider: str
     model: str
+
 
 class UnifiedLLMClient:
     _providers: dict[str, type[BaseProvider]] = {"mock": MockProvider}

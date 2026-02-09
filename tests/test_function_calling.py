@@ -156,13 +156,7 @@ class TestFunctionCallingFormatter:
         """Test parsing Gemini tool calls."""
         formatter = FunctionCallingFormatter()
         response = {
-            "candidates": [
-                {
-                    "content": {
-                        "parts": [{"functionCall": {"name": "search", "args": {"query": "test"}}}]
-                    }
-                }
-            ]
+            "candidates": [{"content": {"parts": [{"functionCall": {"name": "search", "args": {"query": "test"}}}]}}]
         }
 
         calls = formatter.parse_tool_calls(response, "gemini")

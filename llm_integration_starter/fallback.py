@@ -1,4 +1,5 @@
 """Fallback chain for provider redundancy."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -12,6 +13,7 @@ class FallbackResult:
     successful_provider: str
     attempts: int
     errors: list[str] = field(default_factory=list)
+
 
 class FallbackChain:
     def __init__(self, providers: list[str], provider_kwargs: dict | None = None):
@@ -27,7 +29,9 @@ class FallbackChain:
             try:
                 client = UnifiedLLMClient(provider=provider_name, **self.provider_kwargs.get(provider_name, {}))
                 response = client.complete(messages, **kwargs)
-                return FallbackResult(response=response, successful_provider=provider_name, attempts=i+1, errors=errors)
+                return FallbackResult(
+                    response=response, successful_provider=provider_name, attempts=i + 1, errors=errors
+                )
             except Exception as e:
                 errors.append(f"{provider_name}: {type(e).__name__}: {e}")
                 last_exception = e

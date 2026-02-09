@@ -48,9 +48,7 @@ class CostTracker:
     def record(self, model: str, prompt_tokens: int, completion_tokens: int) -> CostRecord:
         """Record a request and compute its cost."""
         prices = self.pricing.get(model, {"input": 0.01, "output": 0.03})
-        cost = (prompt_tokens / 1000 * prices["input"]) + (
-            completion_tokens / 1000 * prices["output"]
-        )
+        cost = (prompt_tokens / 1000 * prices["input"]) + (completion_tokens / 1000 * prices["output"])
 
         record = CostRecord(
             model=model,

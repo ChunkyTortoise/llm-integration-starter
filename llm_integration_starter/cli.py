@@ -1,4 +1,5 @@
 """Command-line interface."""
+
 from __future__ import annotations
 
 import statistics
@@ -14,6 +15,7 @@ from llm_integration_starter.fallback import FallbackChain
 def cli():
     """LLM Integration Starter Kit CLI."""
     pass
+
 
 @cli.command()
 @click.option("--provider", default="mock", help="Provider name")
@@ -36,6 +38,7 @@ def chat(provider: str, model: str | None, temperature: float, message: str):
     except Exception as e:
         click.echo(f"Error: {e}", err=True)
         raise click.Abort()
+
 
 @cli.command()
 @click.option("--providers", default="mock", help="Comma-separated providers")
@@ -61,6 +64,7 @@ def compare(providers: str, temperature: float, message: str):
         except Exception as e:
             click.echo(f"Error with {provider_name}: {e}", err=True)
             click.echo()
+
 
 @cli.command()
 @click.option("--provider", default="mock", help="Provider name")
@@ -101,6 +105,7 @@ def benchmark(provider: str, n_requests: int, temperature: float, message: str):
     else:
         click.echo("\nNo successful requests", err=True)
 
+
 @cli.command()
 @click.option("--providers", default="mock", help="Comma-separated providers")
 @click.option("--temperature", default=0.7, help="Temperature")
@@ -125,6 +130,7 @@ def fallback(providers: str, temperature: float, message: str):
     except Exception as e:
         click.echo(f"All providers failed: {e}", err=True)
         raise click.Abort()
+
 
 if __name__ == "__main__":
     cli()

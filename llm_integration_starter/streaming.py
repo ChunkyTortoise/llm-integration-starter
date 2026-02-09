@@ -1,4 +1,5 @@
 """Streaming response parser."""
+
 from __future__ import annotations
 
 import json
@@ -10,6 +11,7 @@ class StreamDelta:
     token: str
     is_final: bool
     latency_ms: float
+
 
 class StreamingParser:
     def __init__(self):

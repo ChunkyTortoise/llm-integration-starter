@@ -1,4 +1,5 @@
 """Cost tracking and estimation."""
+
 from __future__ import annotations
 
 from dataclasses import dataclass
@@ -12,6 +13,7 @@ class CostEntry:
     output_tokens: int
     cost: float
     timestamp: float
+
 
 class CostTracker:
     def __init__(self):

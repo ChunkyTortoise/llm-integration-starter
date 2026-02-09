@@ -1,4 +1,5 @@
 """Retry logic with circuit breaker."""
+
 from __future__ import annotations
 
 import random
@@ -12,6 +13,7 @@ class CircuitState(Enum):
     OPEN = "open"
     HALF_OPEN = "half_open"
 
+
 @dataclass
 class RetryPolicy:
     max_retries: int = 3
@@ -20,10 +22,11 @@ class RetryPolicy:
     jitter: bool = True
 
     def calculate_backoff(self, attempt: int) -> float:
-        backoff = self.backoff_base * (self.backoff_multiplier ** attempt)
+        backoff = self.backoff_base * (self.backoff_multiplier**attempt)
         if self.jitter:
             backoff *= random.uniform(0.5, 1.5)
         return backoff
+
 
 class CircuitBreaker:
     def __init__(self, failure_threshold: int = 5, recovery_timeout: float = 60.0):

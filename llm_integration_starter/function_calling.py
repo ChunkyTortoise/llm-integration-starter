@@ -1,4 +1,5 @@
 """Function calling abstraction."""
+
 from __future__ import annotations
 
 import json
@@ -16,11 +17,13 @@ class ToolDefinition:
         parameters = {"type": "object", "properties": properties, "required": required or []}
         return cls(name=name, description=description, parameters=parameters)
 
+
 @dataclass
 class ToolCall:
     id: str
     name: str
     arguments: dict
+
 
 class FunctionCallingFormatter:
     def format_tools(self, tools: list[ToolDefinition], provider: str) -> list[dict]:
@@ -74,11 +77,13 @@ class FunctionCallingFormatter:
         tool_calls = []
         message = response.get("choices", [{}])[0].get("message", {})
         for call in message.get("tool_calls", []):
-            tool_calls.append(ToolCall(
-                id=call.get("id", ""),
-                name=call.get("function", {}).get("name", ""),
-                arguments=json.loads(call.get("function", {}).get("arguments", "{}"))
-            ))
+            tool_calls.append(
+                ToolCall(
+                    id=call.get("id", ""),
+                    name=call.get("function", {}).get("name", ""),
+                    arguments=json.loads(call.get("function", {}).get("arguments", "{}")),
+                )
+            )
         return tool_calls
 
     def _parse_gemini_tool_calls(self, response: dict) -> list[ToolCall]:
