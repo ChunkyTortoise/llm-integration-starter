@@ -6,7 +6,7 @@
 [![CI](https://github.com/ChunkyTortoise/llm-integration-starter/workflows/CI/badge.svg)](https://github.com/ChunkyTortoise/llm-integration-starter/actions)
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Tests](https://img.shields.io/badge/tests-76%20passing-brightgreen.svg)]()
+[![Tests](https://img.shields.io/badge/tests-220%20passing-brightgreen.svg)]()
 
 **A beginner-friendly learning kit for integrating multiple LLM providers with a unified interface.**
 
@@ -17,6 +17,18 @@ This is a **code-as-documentation** project designed to teach LLM integration pa
 - **Provider sprawl** — One consistent client across Claude, OpenAI, and Gemini
 - **Missing production patterns** — Retries, circuit breakers, caching, and cost tracking included
 - **Learning curve** — Heavily commented modules that explain the why, not just the what
+
+## Key Metrics
+
+| Metric | Value |
+|--------|-------|
+| Tests | **220 passing** |
+| Providers | 4 (Claude, OpenAI, Gemini, Mock) |
+| Circuit Breaker Recovery | Configurable half-open probes, auto-reset |
+| Fallback Latency | Provider chain failover with error accumulation |
+| Batch Throughput | CLI benchmark mode (`--n-requests`) |
+| Cache | LRU with TTL, hit-rate tracking |
+| Dependencies | 3 (httpx, click, pydantic) |
 
 ## Demo
 
@@ -315,9 +327,17 @@ graph TD
 
 </details>
 
+## Architecture Decisions
+
+| ADR | Title | Status |
+|-----|-------|--------|
+| [ADR-0001](docs/adr/0001-circuit-breaker-pattern.md) | Circuit Breaker Pattern | Accepted |
+| [ADR-0002](docs/adr/0002-fallback-chain-design.md) | Fallback Chain Design | Accepted |
+| [ADR-0003](docs/adr/0003-response-caching-strategy.md) | Response Caching Strategy | Accepted |
+
 ## Test Coverage
 
-**76 tests across 9 test files:**
+**220 tests across 9 test files:**
 
 | Module | Tests | Coverage |
 |--------|-------|----------|
@@ -399,6 +419,14 @@ make clean
 6. **Implement `cache.py`**: Understand caching strategies
 7. **Track with `cost_tracker.py`**: Learn usage monitoring
 8. **Try the `cli.py`**: Interactive experimentation
+
+## Benchmarks
+
+See [BENCHMARKS.md](BENCHMARKS.md) for performance benchmarks across providers, caching, and retry scenarios.
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for release history.
 
 ## Contributing
 
