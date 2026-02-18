@@ -339,6 +339,14 @@ make clean      # Clean build artifacts
 
 Contributions welcome! Prioritize clarity over cleverness, add detailed comments, and include tests.
 
+## Support This Project
+
+If AI Agent Starter Kit has been useful to you, consider sponsoring its continued development:
+
+[![Sponsor](https://img.shields.io/badge/Sponsor-%E2%9D%A4-red?style=for-the-badge)](https://github.com/sponsors/ChunkyTortoise)
+
+See [SPONSORS.md](SPONSORS.md) for sponsorship tiers and benefits.
+
 ## License
 
 MIT License - see [LICENSE](LICENSE) for details.
